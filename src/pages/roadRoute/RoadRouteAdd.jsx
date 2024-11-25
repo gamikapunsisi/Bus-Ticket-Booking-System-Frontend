@@ -62,11 +62,11 @@ const RoadRouteAdd = () => {
   };
 
   return (
-    <div className=" font-sans">
-      <h1 className=" text-xl font-bold mb-4">Register New Road Route</h1>
-      <div className=" ml-5">
+    <div className="font-sans ">
+      <h1 className="mb-4 text-xl font-bold ">Register New Road Route</h1>
+      <div className="ml-5 ">
         <form onSubmit={handleSubmit}>
-          <div className=" grid grid-cols-1 gap-4 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-6 ">
             <div>
               <Input
                 id="routeId"
@@ -76,7 +76,7 @@ const RoadRouteAdd = () => {
                 inputStyle={`w-full lg:w-[350px] h-[40px]`}
                 label={
                   <>
-                    Route ID <span className="text-red-600">*</span>
+                    Route ID <span className="text-blue-600">*</span>
                   </>
                 }
                 value={routeId}
@@ -96,7 +96,7 @@ const RoadRouteAdd = () => {
                 onBlur={handleRouteNameBlur}
                 label={
                   <>
-                    Route Name <span className="text-red-600">*</span>
+                    Route Name <span className="text-blue-600">*</span>
                   </>
                 }
                 error={routeNameHasError && "Please enter valid route name"}
@@ -111,7 +111,7 @@ const RoadRouteAdd = () => {
                 inputStyle={`w-full lg:w-[350px] h-[40px]`}
                 label={
                   <>
-                    Distance <span className="text-red-600">*</span>
+                    Distance <span className="text-blue-600">*</span>
                   </>
                 }
                 value={distance}
@@ -129,7 +129,7 @@ const RoadRouteAdd = () => {
                 inputStyle={`w-full lg:w-[350px] h-[40px]`}
                 label={
                   <>
-                    Estimated Time <span className="text-red-600">*</span>
+                    Estimated Time <span className="text-blue-600">*</span>
                   </>
                 }
                 value={estimatedTime}
@@ -144,7 +144,7 @@ const RoadRouteAdd = () => {
 
           <button
             disabled={hasError || hasEmptyFields}
-            className={` bg-red-500 text-white w-32 h-10 flex items-center justify-center rounded-md ${
+            className={` bg-blue-500 text-white w-32 h-10 flex items-center justify-center rounded-md ${
               hasError || hasEmptyFields
                 ? "cursor-not-allowed"
                 : "cursor-pointer"

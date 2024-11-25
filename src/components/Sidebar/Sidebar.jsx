@@ -23,7 +23,7 @@ const Sidebar = ({ setExpandSideBar, expandSideBar }) => {
     <div
       className={` ${
         expandSideBar ? "w-64" : "w-20"
-      }  bg-gray-800 h-screen p-5 fixed duration-300 pt-20 border-r-[4px] border-red-500`}
+      }  bg-gray-800 h-screen p-5 fixed duration-300 pt-20 border-r-[4px] border-blue-700`}
     >
       <img
         src={ControlIcon}

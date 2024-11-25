@@ -192,12 +192,12 @@ const BusAdd = () => {
   console.log('routeId', routeId, routeName);
 
   return (
-    <div className=" font-sans">
-      <h1 className=" text-xl font-bold mb-4">Register New Bus</h1>
-      <div className=" ml-5">
-        <form onSubmit={handleSubmit} className=" flex flex-col gap-4">
+    <div className="font-sans ">
+      <h1 className="mb-4 text-xl font-bold ">Register New Bus</h1>
+      <div className="ml-5 ">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 ">
           <div className="flex flex-col gap-4 min-h-[400px] ">
-            <div className=" grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               <Input
                 id="busId"
                 name="busId"
@@ -253,7 +253,7 @@ const BusAdd = () => {
                 error={busTypeHasError && "Please enter valid bus type"}
               />
             </div>
-            <div className=" grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               <Input
                 id="busOwner"
                 name="busOwner"
@@ -308,7 +308,7 @@ const BusAdd = () => {
                 }
               />
             </div>
-            <div className=" grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               <Input
                 id="busOwnerEmail"
                 name="busOwnerEmail"
@@ -363,7 +363,7 @@ const BusAdd = () => {
                 error={totalSeatsHasError && "Please enter valid total seats"}
               />
             </div>
-            <div className=" grid grid-cols-1 gap-3  md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <DropDown
                 id="routeId"
                 name="routeName"
@@ -387,12 +387,12 @@ const BusAdd = () => {
                 error={routeIdHasError && "Please enter valid route"}
               />
             </div>
-            <div className=" mt-8">
-              <h1 className="text-lg font-bold  mb-2">Seat Position</h1>
-              <div className=" grid grid-cols-3">
+            <div className="mt-8 ">
+              <h1 className="mb-2 text-lg font-bold">Seat Position</h1>
+              <div className="grid grid-cols-3 ">
                 <div>
-                  <p className=" text-gray-700 mb-2">Left Seat Position</p>
-                  <div className=" grid grid-cols-2">
+                  <p className="mb-2 text-gray-700 ">Left Seat Position</p>
+                  <div className="grid grid-cols-2 ">
                     <Input
                       id="leftPosition"
                       name="leftPosition"
@@ -431,8 +431,8 @@ const BusAdd = () => {
                   </div>
                 </div>
                 <div>
-                  <p className=" text-gray-700 mb-2">Right Seat Position</p>
-                  <div className=" grid grid-cols-2">
+                  <p className="mb-2 text-gray-700 ">Right Seat Position</p>
+                  <div className="grid grid-cols-2 ">
                     <Input
                       id="rightPosition"
                       name="rightPosition"
@@ -471,8 +471,8 @@ const BusAdd = () => {
                   </div>
                 </div>
                 <div>
-                  <p className=" text-gray-700 mb-2">Back Seat Position</p>
-                  <div className=" grid grid-cols-2">
+                  <p className="mb-2 text-gray-700 ">Back Seat Position</p>
+                  <div className="grid grid-cols-2 ">
                     <Input
                       id="backPosition"
                       name="backPosition"
@@ -516,7 +516,7 @@ const BusAdd = () => {
 
           <button
             disabled={hasError || hasEmptyFields}
-            className={` bg-red-500 text-white w-32 h-10 flex items-center justify-center rounded-md ${
+            className={` bg-blue-500 text-white w-32 h-10 flex items-center justify-center rounded-md ${
               hasError || hasEmptyFields
                 ? "cursor-not-allowed"
                 : "cursor-pointer"

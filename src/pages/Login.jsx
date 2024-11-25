@@ -1,5 +1,5 @@
 import React from "react";
-import { GiHummingbird } from "react-icons/gi";
+import { BsBusFrontFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { isNotEmpty } from "../validation/Validations";
 import { useInput } from "../hooks/use-input";
@@ -35,13 +35,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center justify-center">
-        <div className=" flex items-center gap-2">
+    <div className="flex flex-col justify-center min-h-full px-6 py-12 lg:px-8">
+      <div className="flex flex-col items-center justify-center sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="flex items-center gap-2 ">
           <h1 className=" max-[400px]:text-xl text-6xl font-bold text-gray-700 font-mono">
             SLTS
           </h1>
-          <GiHummingbird className="max-[400px]:text-lg  text-6xl text-red-600" />
+          <BsBusFrontFill className="max-[400px]:text-lg  text-6xl text-blue-600" />
         </div>
         <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight to-blue-500">
           Sign In
@@ -69,7 +69,7 @@ const Login = () => {
                 className="block w-full px-2 rounded-md border-0 bg-white/5 py-1.5 text-cyan-600 shadow-sm ring-1 ring-inset ring-red-500 focus:ring-2 focus:ring-inset focus:ring-balck sm:text-sm sm:leading-6"
               />
               {emailHasError && (
-                <p className="text-red-500 text-sm mt-1 font-sans font-normal">
+                <p className="mt-1 font-sans text-sm font-normal text-red-500">
                   Email is required
                 </p>
               )}
@@ -97,7 +97,7 @@ const Login = () => {
                 className="block w-full px-2 rounded-md border-0 bg-white/5 py-1.5 text-cyan-600 shadow-sm ring-1 ring-inset ring-red-500 focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6"
               />
               {passwordHasError && (
-                <p className="text-red-500 text-sm mt-1 font-sans font-normal">
+                <p className="mt-1 font-sans text-sm font-normal text-red-500">
                   Password is required
                 </p>
               )}
@@ -114,7 +114,7 @@ const Login = () => {
           </div>
         </form>
 
-        <p className="mt-10 text-center text-sm text-gray-400">
+        <p className="mt-10 text-sm text-center text-gray-400">
           Don't have an account?{" "}
           <Link
             to="/signup"
