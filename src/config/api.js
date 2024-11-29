@@ -1,22 +1,20 @@
-import axios from "axios";
+import axios from 'axios';
 
-const bus_ticket_booking_api = axios.create({
-  baseURL: process.env.BUS_TICKET_BOOKING_API || "http://localhost:5000/api/v1",
+// Create an Axios instance
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api', // Base URL for your API
   headers: {
-    "Content-type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
-// Use axios interceptors to include the token in all requests
-bus_ticket_booking_api.interceptors.request.use(
+// Add a request interceptor to include the token if needed
+api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    console.log("retrieving token", token);
-
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => {
@@ -24,4 +22,15 @@ bus_ticket_booking_api.interceptors.request.use(
   }
 );
 
-export default bus_ticket_booking_api;
+// Add a response interceptor to handle errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      console.error('API Error:', error.response.data.message || 'Unknown Error');
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

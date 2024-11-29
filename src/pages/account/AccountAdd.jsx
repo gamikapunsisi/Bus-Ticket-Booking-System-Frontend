@@ -51,14 +51,14 @@ const RoadRouteAdd = () => {
 
   return (
     <div className="font-sans">
-      <h1 className="mb-4 text-xl font-bold">Register New Road Route</h1>
+      <h1 className="mb-4 text-xl font-bold">Register New Account</h1>
       <div className="ml-5">
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 mb-6">
             {/* Route ID Input */}
             <Input
-              id="routeId"
-              name="routeId"
+              id="accountId"
+              name="accountId"
               type="text"
               placeholder="Ex: 22-2 (Kandy - Ampara route code)"
               inputStyle="w-full lg:w-[350px] h-[40px]"

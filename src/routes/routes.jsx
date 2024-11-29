@@ -4,6 +4,7 @@ import Dashboard from "../pages/Dashboard";
 import RoadRouteAdd from "../pages/roadRoute/RoadRouteAdd";
 import BusAdd from "../pages/bus/BusAdd";
 import Login from "../pages/Login";
+import AccountAdd from "../pages/account/AccountAdd";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: '/add-bus',
         element: <BusAdd />
+      },
+      {
+        path: '/add-account',
+        element: <AccountAdd />
       }
     ],
   },
