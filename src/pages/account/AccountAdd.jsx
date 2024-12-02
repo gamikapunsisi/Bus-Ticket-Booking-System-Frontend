@@ -60,34 +60,34 @@ const RoadRouteAdd = () => {
               id="accountId"
               name="accountId"
               type="text"
-              placeholder="Ex: 22-2 (Kandy - Ampara route code)"
+              placeholder="Ex: A1 (ID - A-01)"
               inputStyle="w-full lg:w-[350px] h-[40px]"
               label={
                 <>
-                  Route ID <span className="text-blue-600">*</span>
+                  Account ID <span className="text-blue-600">*</span>
                 </>
               }
-              value={routeIdInput.value}
-              onChange={routeIdInput.handleInputChange}
-              onBlur={routeIdInput.handleInputBlur}
-              error={routeIdInput.hasError && "Please enter a valid route ID"}
+              value={accountIdInput.value}
+              onChange={accountIdInput.handleInputChange}
+              onBlur={accountIdInput.handleInputBlur}
+              error={accountIdInput.hasError && "Please enter a valid Account ID"}
             />
 
-            {/* Route Name Input */}
+            {/* Account Name Input */}
             <Input
-              id="routeName"
+              id="accountName"
               type="text"
-              placeholder="Ex: Kandy - Colombo"
+              placeholder="Ex: Gamika Punsisi"
               inputStyle="w-full lg:w-[350px] h-[40px]"
-              value={routeNameInput.value}
-              onChange={routeNameInput.handleInputChange}
-              onBlur={routeNameInput.handleInputBlur}
+              value={accountNameInput.value}
+              onChange={accounytNameInput.handleInputChange}
+              onBlur={accountNameInput.handleInputBlur}
               label={
                 <>
-                  Route Name <span className="text-blue-600">*</span>
+                  Account Name <span className="text-blue-600">*</span>
                 </>
               }
-              error={routeNameInput.hasError && "Please enter a valid route name"}
+              error={accountNameInput.hasError && "Please enter a valid account name"}
             />
 
             {/* Distance Input */}

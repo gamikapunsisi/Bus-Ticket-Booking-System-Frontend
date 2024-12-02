@@ -32,7 +32,7 @@ const Dashboard = () => {
         >
           {/* Render the Icon */}
           <card.icon className="mb-2 text-4xl text-blue-700" />
-          <h2 className="text-lg font-semibold text-gray-700">{card.title}</h2>
+          <h2 className="text-lg font-semibold text-black">{card.title}</h2>
           {/* Render the Count */}
           <span className="text-sm font-medium text-gray-500">{card.count} items</span>
         </div>
