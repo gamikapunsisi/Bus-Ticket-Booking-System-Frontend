@@ -7,6 +7,8 @@ import { FaCog } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { MdOutlineTravelExplore } from "react-icons/md";
+
 
 const Sidebar = ({ setExpandSideBar, expandSideBar }) => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const Sidebar = ({ setExpandSideBar, expandSideBar }) => {
     { title: "Dashboard", icon: <FaChartLine />, gap: true },
     { title: "Routes", icon: <FaMapMarkedAlt />, path: "/add-road-routes" },
     { title: "Buses", icon: <FaBusAlt />, path: "/add-bus" },
+    { title: "Trips ", icon: <MdOutlineTravelExplore />,path: "/add-trip" }, 
     { title: "Schedule ", icon: <FaCalendarAlt /> },
     { title: "Accounts", icon: <FaUserFriends /> },
     { title: "Setting", icon: <FaCog /> },

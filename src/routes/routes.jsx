@@ -3,6 +3,7 @@ import Root from "../Layout/Root";
 import Dashboard from "../pages/Dashboard";
 import RoadRouteAdd from "../pages/roadRoute/RoadRouteAdd";
 import BusAdd from "../pages/bus/BusAdd";
+import TripAdd from "../pages/trips/Trips";
 import Login from "../pages/Login";
 
 const router = createBrowserRouter([
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: '/add-bus',
         element: <BusAdd />
+      },
+      {
+        path: '/add-trip',
+        element: <TripAdd />
       }
     ],
   },
