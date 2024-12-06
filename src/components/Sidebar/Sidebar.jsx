@@ -5,7 +5,7 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaCog } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa";
-import { FaUserFriends } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineTravelExplore } from "react-icons/md";
 
@@ -18,7 +18,7 @@ const Sidebar = ({ setExpandSideBar, expandSideBar }) => {
     { title: "Buses", icon: <FaBusAlt />, path: "/add-bus" },
     { title: "Trips ", icon: <MdOutlineTravelExplore />,path: "/add-trip" }, 
     { title: "Schedule ", icon: <FaCalendarAlt /> },
-    { title: "Accounts", icon: <FaUserFriends /> },
+    { title: "Profile", icon: <CgProfile />, path: "/add-commuter-profile" },
     { title: "Setting", icon: <FaCog /> },
   ];
 
