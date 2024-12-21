@@ -18,7 +18,7 @@ const Sidebar = ({ setExpandSideBar, expandSideBar }) => {
     { title: "Buses", icon: <FaBusAlt />, path: "/add-bus" },
     { title: "Trips ", icon: <MdOutlineTravelExplore />,path: "/add-trip" }, 
     { title: "Schedule ", icon: <FaCalendarAlt /> },
-    { title: "Profile", icon: <CgProfile />, path: "/add-commuter-profile" },
+    { title: "Commuter Profile", icon: <CgProfile />, path: "/add-commuter-profile" },
     { title: "Setting", icon: <FaCog /> },
   ];
 
