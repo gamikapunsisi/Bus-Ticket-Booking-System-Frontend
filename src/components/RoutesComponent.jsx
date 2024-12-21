@@ -4,22 +4,37 @@ import axios from 'axios';
 const RoutesComponent = () => {
   const [routes, setRoutes] = useState([]);
 
-  useEffect(() => {
-    const fetchRoutes = async () => {
-      try {
-        const response = await axios.get('/api/routes');
-        if (Array.isArray(response.data)) {
-          setRoutes(response.data);
-        } else {
-          console.error('API did not return an array:', response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching routes:', error);
-      }
-    };
+//   useEffect(() => {
+//     const fetchRoutes = async () => {
+//       try {
+//         const response = await axios.get('/api/routes');
+//         if (Array.isArray(response.data)) {
+//           setRoutes(response.data);
+//         } else {
+//           console.error('API did not return an array:', response.data);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching routes:', error);
+//       }
+//     };
 
-    fetchRoutes();
-  }, []);
+//     fetchRoutes();
+//   }, []);
+
+const fetchRoutes = async () => {
+    try {
+      const response = await axios.get('/api/routes');
+      console.log('API Response:', response.data); // Log the response data
+      if (Array.isArray(response.data)) {
+        setRoutes(response.data);
+      } else {
+        console.error('API did not return an array:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching routes:', error);
+    }
+  };
+  
 
   if (!Array.isArray(routes)) {
     return <div>Error: Routes data is invalid.</div>;

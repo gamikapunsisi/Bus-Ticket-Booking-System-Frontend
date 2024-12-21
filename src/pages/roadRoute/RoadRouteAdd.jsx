@@ -54,7 +54,8 @@ const RoadRouteAdd = () => {
   useEffect(() => {
     const loadRoutes = async () => {
       try {
-        const data = await fetchRoutes();
+        const data = await fetchRoutes();  // Ensure this function returns the correct format
+        console.log(data);  // Add a console log to inspect the response data
         if (Array.isArray(data)) {
           setRoutes(data);  // Store the fetched routes in state if it's an array
         } else {
@@ -66,6 +67,8 @@ const RoadRouteAdd = () => {
     };
     loadRoutes();
   }, []);
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,7 +125,7 @@ const RoadRouteAdd = () => {
                 id="routeId"
                 name="routeId"
                 type="text"
-                placeholder="Ex: 22-2 (kandy - Ampara route code)"
+                placeholder="Ex: 22-2 (Kandy - Ampara route code)"
                 label="Route ID"
                 value={routeId}
                 onChange={handleRouteIdChange}
@@ -186,21 +189,22 @@ const RoadRouteAdd = () => {
           </tr>
         </thead>
         <tbody>
-          {routes && routes.length > 0 ? (
-            routes.map((route, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="px-4 py-2 border border-gray-300">{route.routeId}</td>
-                <td className="px-4 py-2 border border-gray-300">{route.routeName}</td>
-                <td className="px-4 py-2 border border-gray-300">{route.distance} km</td>
-                <td className="px-4 py-2 border border-gray-300">{route.estimatedTime}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4" className="px-4 py-2 text-center border">No routes available</td>
-            </tr>
-          )}
-        </tbody>
+  {routes.length > 0 ? (
+    routes.map((route, index) => (
+      <tr key={index}>
+        <td>{route.routeId}</td>
+        <td>{route.routeName}</td>
+        <td>{route.distance} km</td>
+        <td>{route.estimatedTime}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="4" className="text-center">No routes available</td>
+    </tr>
+  )}
+</tbody>
+
       </table>
     </div>
   );
