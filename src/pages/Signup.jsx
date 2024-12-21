@@ -2,7 +2,15 @@ import React from "react";
 import { isNotEmpty } from "../validation/Validations";
 import { useInput } from "../hooks/use-input";
 
-const Login = () => {
+const SignUp = () => {
+  const {
+    value: username,
+    handleInputChange: handleUsernameChange,
+    handleInputBlur: handleUsernameBlur,
+    hasError: usernameHasError,
+    reset: resetUsername,
+  } = useInput("", isNotEmpty);
+
   const {
     value: email,
     handleInputChange: handleEmailChange,
@@ -21,13 +29,15 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (emailHasError || passwordHasError) {
+    if (usernameHasError || emailHasError || passwordHasError) {
       console.log("Validation failed");
       return;
     }
+    console.log("Username: ", username);
     console.log("Email: ", email);
     console.log("Password: ", password);
 
+    resetUsername();
     resetEmail();
     resetPassword();
   };
@@ -36,9 +46,31 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
         <h2 className="mb-4 text-2xl font-bold text-center text-gray-700">
-          Welcome Back! SLTB
+          Create Your Account
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={handleUsernameChange}
+              onBlur={handleUsernameBlur}
+              className={`mt-1 block w-full p-2 border rounded-md focus:ring ${
+                usernameHasError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+              }`}
+              placeholder="Enter your username"
+            />
+            {usernameHasError && (
+              <p className="mt-1 text-sm text-red-500">Username is required.</p>
+            )}
+          </div>
           <div>
             <label
               htmlFor="email"
@@ -85,15 +117,15 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full p-2 text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 text-white bg-green-600 rounded-md hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
           >
-            Login
+            Sign Up
           </button>
         </form>
         <p className="mt-4 text-center text-gray-500">
-          Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
-            Sign Up
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            Log In
           </a>
         </p>
       </div>
@@ -101,4 +133,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

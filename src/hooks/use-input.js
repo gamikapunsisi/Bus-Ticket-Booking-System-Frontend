@@ -1,44 +1,36 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function useInput(defaultValue, validationFunction) {
   const [enteredValue, setEnteredValue] = useState(defaultValue);
   const [didEdit, setDidEdit] = useState(false);
-  const [enteredId, setEnteredId] = useState(null);
 
+  // Validation logic
   const valueIsValid = validationFunction(enteredValue);
+  const hasError = didEdit && !valueIsValid;
 
+  // Input change handler
   function handleInputChange(event) {
-    const { type, value, options, selectedIndex, id } = event.target;
-
-    if (type === 'select-one') {
-      const selectedOptionId = options[selectedIndex].id;
-      setEnteredValue(value);
-      setEnteredId(selectedOptionId);
-    } else {
-      setEnteredValue(value);
-      setEnteredId(id || null);
-    }
-    setDidEdit(false);
+    setEnteredValue(event.target.value); // Update value
+    setDidEdit(false); // Reset editing state on change
   }
 
+  // Blur event handler
   function handleInputBlur() {
-    setDidEdit(true);
+    setDidEdit(true); // Mark as edited
   }
 
+  // Reset input state
   function reset() {
-    setEnteredValue(defaultValue);
-    setDidEdit(false);
-    setEnteredId(null);
+    setEnteredValue(defaultValue); // Reset to initial value
+    setDidEdit(false); // Reset editing state
   }
 
   return {
     value: enteredValue,
-    setValue: setEnteredValue,
-    id: enteredId,
-    setId: setEnteredId,
+    isValid: valueIsValid,
+    hasError,
     handleInputChange,
     handleInputBlur,
-    hasError: didEdit && !valueIsValid,
     reset,
   };
 }
