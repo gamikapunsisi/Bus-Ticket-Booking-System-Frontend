@@ -1,0 +1,49 @@
+name: Deploy React App to S3
+
+on:
+  push:
+    branches:
+      - main  # Trigger the deployment on every push to the `main` branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js (for React build process)
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Specify your Node.js version (use the one you're using locally)
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Build the React app
+      - name: Build the React app
+        run: npm run build
+
+      # Step 5: Set up AWS CLI
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Replace with your AWS region
+
+      # Step 6: Sync build folder with S3 bucket
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./build/ s3://bookingfrontend.gamikapunsisi.live --delete
+          # The `--delete` option removes files from the S3 bucket that are not in the `build/` folder
+
+      # Step 7: Invalidate CloudFront cache (if using CloudFront CDN)
+      - name: Invalidate CloudFront cache (optional)
+        if: ${{ success() }}
+        run: |
+          aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
