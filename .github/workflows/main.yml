@@ -41,9 +41,3 @@ jobs:
         run: |
           aws s3 sync ./build/ s3://bookingfrontend.gamikapunsisi.live --delete
           # The `--delete` option removes files from the S3 bucket that are not in the `build/` folder
-
-      # Step 7: Invalidate CloudFront cache (if using CloudFront CDN)
-      - name: Invalidate CloudFront cache (optional)
-        if: ${{ success() }}
-        run: |
-          aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
