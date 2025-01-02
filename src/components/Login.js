@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
+import bus_ticket_booking_api from '../config/api';
 
 const Login = ({ onLogin }) => {
   const navigate = useNavigate();
@@ -20,41 +21,41 @@ const Login = ({ onLogin }) => {
     setError(null);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  
 
-    try {
-      const response = await fetch('http://localhost:5001/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError(null);
 
-      const data = await response.json();
+  try {
+    // const response = await bus_ticket_booking_api.post( '/auth/login',formData);
+    const response = await bus_ticket_booking_api.post('http://localhost:5001/api/auth/login', formData);
+    console.log('Sending login request to backend...');
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
 
-      // Store token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+    console.log('responce',response)
+    const data = response.data;
 
-      // Update app state
-      onLogin(data.user.role);
-
-      // Navigate based on role
-      navigate(data.user.role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+    if (!response.status === 200) {
+      throw new Error(data.message || 'Login failed');
     }
-  };
+
+    // Store token and user data
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Update app state
+    onLogin(data.user.role);
+
+    // Navigate based on role
+    navigate(data.user.role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div
