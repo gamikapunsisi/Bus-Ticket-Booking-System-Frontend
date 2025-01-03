@@ -38,7 +38,7 @@ function App() {
         <Route path="/login" element={<Login onLogin={login} />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Role-Based Dashboards */}
+        {/* Role-Based Dashboards
         <Route
           path="/admin-dashboard"
           element={userRole === 'admin' ? <AdminDashboard onLogout={logout} /> : <Navigate to="/" />}
@@ -46,7 +46,7 @@ function App() {
         <Route
           path="/user-dashboard"
           element={userRole === 'user' ? <UserDashboard onLogout={logout} /> : <Navigate to="/" />}
-        />
+        /> */}
 
        {/* Seat Selection Route */}
        <Route
@@ -55,6 +55,7 @@ function App() {
         />
 
       <Route path="/contact" element={<ContactUs />} />
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
 
         {/* All routes handled within AppRoutes */}

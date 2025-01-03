@@ -18,6 +18,9 @@ const Navbar = () => {
           <li>
             <a href="/contact" className="hover:text-gray-200">Contact Us</a>
           </li>
+          <li>
+              <a href="/admin" className="hover:text-gray-200">Admin Dashboard</a>
+            </li>
         </ul>
         {/* Mobile Menu */}
         <div className="hidden md:flex gap-4">
