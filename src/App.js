@@ -9,6 +9,7 @@ import UserDashboard from './components/UserDashboard';
 import Signup from './components/Signup';
 import BookingPage from "./pages/BookingPage";
 import SeatSelection from './components/SeatSelection'; // Import SeatSelection component
+import TripSchedule from './components/TripSchedule';
 import ContactUs from './components/ContactUs';
 import Footer from './components/ Footer';
 
@@ -52,6 +53,12 @@ function App() {
        <Route
           path="/seat-selection"
           element={<SeatSelection />} // Ensure this is the correct component
+        />
+
+          {/* Trip Schedule Route */}
+          <Route
+          path="/trip-schedule"
+          element={<TripSchedule />} // Add the TripSchedule route here
         />
 
       <Route path="/contact" element={<ContactUs />} />

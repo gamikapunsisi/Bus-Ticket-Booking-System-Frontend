@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Plus } from "react-feather"; // Assuming you're using react-feather for icons
 
 const AddBusForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,9 @@ const AddBusForm = ({ onSubmit }) => {
     ],
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -37,12 +41,18 @@ const AddBusForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage(""); // Reset error message before submission
+
     try {
-      const response = await axios.post("http://localhost:5000/api/buses", formData);
+      const response = await axios.post("http://localhost:5001/api/buses", formData);
       console.log("New Bus Added:", response.data);
-      onSubmit(response.data);
+      onSubmit(response.data); // Pass the added bus data to parent component
     } catch (error) {
-      console.error("Error adding bus:", error);
+      console.error("Error adding bus:", error.response ? error.response.data : error.message);
+      setErrorMessage("Error adding bus. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -201,10 +211,15 @@ const AddBusForm = ({ onSubmit }) => {
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+        disabled={isLoading}
+        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
       >
-        Add Bus
+        <Plus className="w-5 h-5 mr-2" />
+        {isLoading ? "Adding..." : "Add Bus"}
       </button>
+
+      {/* Error Message */}
+      {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
     </form>
   );
 };
