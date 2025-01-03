@@ -1,203 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const AddBus = () => {
-  const navigate = useNavigate();
-  const [buses, setBuses] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-
+const AddBusForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     busId: '',
     busName: '',
-    busType: '',
+    busType: 'Standard',
     busOwner: '',
+    busOwnerNIC: '',
     busOwnerContact: '',
     busOwnerEmail: '',
-    busOwnerNIC: '',
-    totalSeats: '',
+    busOwnerAddress: '',
     routeId: '',
+    totalSeats: '',
+    seatPositions: [
+      { positionName: 'Left', numberOfSeatsPerRow: '', numberOfRows: '' },
+      { positionName: 'Right', numberOfSeatsPerRow: '', numberOfRows: '' },
+      { positionName: 'Back', numberOfSeatsPerRow: '', numberOfRows: '' },
+    ],
   });
-
-  const fetchBuses = async () => {
-    // Simulate fetching data
-    const mockData = [
-      { busId: '1', busName: 'Express', busType: 'Luxury', routeId: '101' },
-      { busId: '2', busName: 'City', busType: 'Normal', routeId: '102' },
-    ];
-    setBuses(mockData);
-  };
-
-  useEffect(() => {
-    fetchBuses();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setError(null);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSuccess('Bus added successfully!');
-    setBuses([...buses, formData]);
     setFormData({
-      busId: '',
-      busName: '',
-      busType: '',
-      busOwner: '',
-      busOwnerContact: '',
-      busOwnerEmail: '',
-      busOwnerNIC: '',
-      totalSeats: '',
-      routeId: '',
+      ...formData,
+      [name]: value,
     });
   };
 
-  const handleDelete = (busId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this bus?');
-    if (confirmDelete) {
-      setBuses(buses.filter((bus) => bus.busId !== busId));
+  const handleSeatChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedSeatPositions = [...formData.seatPositions];
+
+    updatedSeatPositions[index] = {
+      ...updatedSeatPositions[index],
+      [name]: value,
+    };
+
+    setFormData({
+      ...formData,
+      seatPositions: updatedSeatPositions,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Send the form data to the backend
+      const response = await axios.post('http://localhost:5000/api/buses', formData);
+      console.log('New Bus Added:', response.data);
+      onSubmit(response.data); // Call the parent onSubmit function if needed
+    } catch (error) {
+      console.error('Error adding bus:', error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-        <button
-          onClick={() => navigate('/admin-dashboard')}
-          className="flex items-center text-gray-600 hover:text-gray-800"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Dashboard
-        </button>
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6">
+      <h1 className="text-2xl font-semibold text-gray-800">Add New Bus</h1>
+
+      {/* General Bus Information */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-gray-700 font-medium">Bus ID</label>
+          <input
+            type="text"
+            name="busId"
+            value={formData.busId}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Bus Name</label>
+          <input
+            type="text"
+            name="busName"
+            value={formData.busName}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Bus Type</label>
+          <select
+            name="busType"
+            value={formData.busType}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="Standard">Standard</option>
+            <option value="Luxury">Luxury</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Total Seats</label>
+          <input
+            type="number"
+            name="totalSeats"
+            value={formData.totalSeats}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Bus Management</h1>
-          <p className="mt-2 text-gray-600">Add and manage buses in the system</p>
+      {/* Owner Information */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-700">Owner Information</h2>
+        <div>
+          <label className="block text-gray-700 font-medium">Owner Name</label>
+          <input
+            type="text"
+            name="busOwner"
+            value={formData.busOwner}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
         </div>
+        {/* Other owner fields... */}
+      </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Bus</h2>
-          {success && <div className="text-green-600 mb-4">{success}</div>}
-          {error && <div className="text-red-600 mb-4">{error}</div>}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Bus ID</label>
-                <input
-                  type="text"
-                  name="busId"
-                  value={formData.busId}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Bus Name</label>
-                <input
-                  type="text"
-                  name="busName"
-                  value={formData.busName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Bus Type</label>
-                <select
-                  name="busType"
-                  value={formData.busType}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                  required
-                >
-                  <option value="">Select bus type</option>
-                  <option value="Luxury">Luxury</option>
-                  <option value="Semi-Luxury">Semi-Luxury</option>
-                  <option value="Normal">Normal</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Route ID</label>
-                <input
-                  type="text"
-                  name="routeId"
-                  value={formData.routeId}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              {/* Owner Info */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Owner Name</label>
-                <input
-                  type="text"
-                  name="busOwner"
-                  value={formData.busOwner}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Contact</label>
-                <input
-                  type="text"
-                  name="busOwnerContact"
-                  value={formData.busOwnerContact}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
+      {/* Seat Position Information */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-700">Seat Positions</h2>
+        {formData.seatPositions.map((seatPosition, index) => (
+          <div key={index} className="space-y-2">
+            <h3 className="text-md font-semibold text-blue-600">{seatPosition.positionName} Position</h3>
+            <div>
+              <label className="block text-gray-700 font-medium">Seats Per Row</label>
+              <input
+                type="number"
+                name="numberOfSeatsPerRow"
+                value={seatPosition.numberOfSeatsPerRow}
+                onChange={(e) => handleSeatChange(e, index)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
             </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            >
-              Add Bus
-            </button>
-          </form>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Bus List</h2>
-          <ul className="space-y-4">
-            {buses.map((bus) => (
-              <li
-                key={bus.busId}
-                className="flex justify-between items-center border-b pb-4"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">{bus.busName}</p>
-                  <p className="text-gray-600">Type: {bus.busType}</p>
-                  <p className="text-gray-600">Route ID: {bus.routeId}</p>
-                </div>
-                <button
-                  onClick={() => handleDelete(bus.busId)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+            <div>
+              <label className="block text-gray-700 font-medium">Number of Rows</label>
+              <input
+                type="number"
+                name="numberOfRows"
+                value={seatPosition.numberOfRows}
+                onChange={(e) => handleSeatChange(e, index)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+          </div>
+        ))}
       </div>
+
+      <button
+        type="submit"
+        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all"
+      >
+        Add Bus
+      </button>
+    </form>
+  );
+};
+
+const AdminDashboard = () => {
+  const handleAddBus = (busData) => {
+    console.log('New Bus Data:', busData);
+    // You can handle the added bus here, like updating the state or notifying the user
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-8">
+      <AddBusForm onSubmit={handleAddBus} />
     </div>
   );
 };
 
-export default AddBus;
+export default AdminDashboard;
