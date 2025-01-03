@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 const AddBusForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    busId: '',
-    busName: '',
-    busType: 'Standard',
-    busOwner: '',
-    busOwnerNIC: '',
-    busOwnerContact: '',
-    busOwnerEmail: '',
-    busOwnerAddress: '',
-    routeId: '',
-    totalSeats: '',
+    busId: "",
+    busName: "",
+    busType: "Standard",
+    busOwner: "",
+    busOwnerNIC: "",
+    busOwnerContact: "",
+    busOwnerEmail: "",
+    busOwnerAddress: "",
+    routeId: "",
+    totalSeats: "",
     seatPositions: [
-      { positionName: 'Left', numberOfSeatsPerRow: '', numberOfRows: '' },
-      { positionName: 'Right', numberOfSeatsPerRow: '', numberOfRows: '' },
-      { positionName: 'Back', numberOfSeatsPerRow: '', numberOfRows: '' },
+      { positionName: "Left", numberOfSeatsPerRow: "", numberOfRows: "" },
+      { positionName: "Right", numberOfSeatsPerRow: "", numberOfRows: "" },
+      { positionName: "Back", numberOfSeatsPerRow: "", numberOfRows: "" },
     ],
   });
 
@@ -31,35 +31,26 @@ const AddBusForm = ({ onSubmit }) => {
   const handleSeatChange = (e, index) => {
     const { name, value } = e.target;
     const updatedSeatPositions = [...formData.seatPositions];
-
-    updatedSeatPositions[index] = {
-      ...updatedSeatPositions[index],
-      [name]: value,
-    };
-
-    setFormData({
-      ...formData,
-      seatPositions: updatedSeatPositions,
-    });
+    updatedSeatPositions[index][name] = value;
+    setFormData({ ...formData, seatPositions: updatedSeatPositions });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Send the form data to the backend
-      const response = await axios.post('http://localhost:5000/api/buses', formData);
-      console.log('New Bus Added:', response.data);
-      onSubmit(response.data); // Call the parent onSubmit function if needed
+      const response = await axios.post("http://localhost:5000/api/buses", formData);
+      console.log("New Bus Added:", response.data);
+      onSubmit(response.data);
     } catch (error) {
-      console.error('Error adding bus:', error);
+      console.error("Error adding bus:", error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6">
-      <h1 className="text-2xl font-semibold text-gray-800">Add New Bus</h1>
+      <h1 className="text-2xl font-bold text-gray-800">Add New Bus</h1>
 
-      {/* General Bus Information */}
+      {/* General Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-gray-700 font-medium">Bus ID</label>
@@ -109,8 +100,8 @@ const AddBusForm = ({ onSubmit }) => {
       </div>
 
       {/* Owner Information */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-700">Owner Information</h2>
+      <h2 className="text-lg font-semibold text-gray-700">Owner Information</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-gray-700 font-medium">Owner Name</label>
           <input
@@ -122,42 +113,95 @@ const AddBusForm = ({ onSubmit }) => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
           />
         </div>
-        {/* Other owner fields... */}
+        <div>
+          <label className="block text-gray-700 font-medium">Owner NIC</label>
+          <input
+            type="text"
+            name="busOwnerNIC"
+            value={formData.busOwnerNIC}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Contact Number</label>
+          <input
+            type="text"
+            name="busOwnerContact"
+            value={formData.busOwnerContact}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Email Address</label>
+          <input
+            type="email"
+            name="busOwnerEmail"
+            value={formData.busOwnerEmail}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium">Address</label>
+          <input
+            type="text"
+            name="busOwnerAddress"
+            value={formData.busOwnerAddress}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
       </div>
 
-      {/* Seat Position Information */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-700">Seat Positions</h2>
-        {formData.seatPositions.map((seatPosition, index) => (
-          <div key={index} className="space-y-2">
-            <h3 className="text-md font-semibold text-blue-600">{seatPosition.positionName} Position</h3>
-            <div>
-              <label className="block text-gray-700 font-medium">Seats Per Row</label>
-              <input
-                type="number"
-                name="numberOfSeatsPerRow"
-                value={seatPosition.numberOfSeatsPerRow}
-                onChange={(e) => handleSeatChange(e, index)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium">Number of Rows</label>
-              <input
-                type="number"
-                name="numberOfRows"
-                value={seatPosition.numberOfRows}
-                onChange={(e) => handleSeatChange(e, index)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
+      {/* Route Information */}
+      <div>
+        <label className="block text-gray-700 font-medium">Route ID</label>
+        <input
+          type="text"
+          name="routeId"
+          value={formData.routeId}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+        />
+      </div>
+
+      {/* Seat Positions */}
+      <h2 className="text-lg font-semibold text-gray-700">Seat Positions</h2>
+      {formData.seatPositions.map((seatPosition, index) => (
+        <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-gray-700 font-medium">{seatPosition.positionName} - Seats Per Row</label>
+            <input
+              type="number"
+              name="numberOfSeatsPerRow"
+              value={seatPosition.numberOfSeatsPerRow}
+              onChange={(e) => handleSeatChange(e, index)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            />
           </div>
-        ))}
-      </div>
+          <div>
+            <label className="block text-gray-700 font-medium">{seatPosition.positionName} - Number of Rows</label>
+            <input
+              type="number"
+              name="numberOfRows"
+              value={seatPosition.numberOfRows}
+              onChange={(e) => handleSeatChange(e, index)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+        </div>
+      ))}
 
+      {/* Submit Button */}
       <button
         type="submit"
-        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all"
+        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
       >
         Add Bus
       </button>
@@ -165,17 +209,4 @@ const AddBusForm = ({ onSubmit }) => {
   );
 };
 
-const AdminDashboard = () => {
-  const handleAddBus = (busData) => {
-    console.log('New Bus Data:', busData);
-    // You can handle the added bus here, like updating the state or notifying the user
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <AddBusForm onSubmit={handleAddBus} />
-    </div>
-  );
-};
-
-export default AdminDashboard;
+export default AddBusForm;

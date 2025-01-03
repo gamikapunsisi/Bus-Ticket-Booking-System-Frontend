@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Assuming React Router is used for navigation
 
 const HomePage = () => {
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedRoute, setSelectedRoute] = useState(null);
+  const navigate = useNavigate(); // Hook to navigate between pages
 
   // Fetch routes from the backend API
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
         const response = await axios.get("http://localhost:5001/api/routes"); // Backend URL
-        setRoutes(response.data.data); 
+        setRoutes(response.data.data);
         setLoading(false);
       } catch (error) {
         setError("Failed to fetch routes. Please try again.");
@@ -27,6 +29,15 @@ const HomePage = () => {
     const routeId = e.target.value;
     const route = routes.find((r) => r.routeId === routeId);
     setSelectedRoute(route);
+  };
+
+  // Handle Booking button click
+  const handleBookingClick = () => {
+    if (selectedRoute) {
+      navigate("/seat-selection", { state: { route: selectedRoute } });
+    } else {
+      setError("Please select a route before proceeding.");
+    }
   };
 
   return (
@@ -74,9 +85,10 @@ const HomePage = () => {
                     <p className="text-gray-700">Estimated Time: {selectedRoute.estimatedTime}</p>
                   </div>
                 )}
-                {/* Search Button */}
+                {/* Booking Button */}
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleBookingClick}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded"
                 >
                   Booking
@@ -102,6 +114,15 @@ const HomePage = () => {
                 >
                   <h3 className="text-xl font-bold text-blue-600">{route.routeName}</h3>
                   <p className="mt-2 text-gray-700">Starting from Rs:1000</p>
+                  <button
+                    onClick={() => {
+                      setSelectedRoute(route);
+                      navigate("/seat-selection", { state: { route } });
+                    }}
+                    className="mt-4 bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Book Now
+                  </button>
                 </div>
               ))
             )}
