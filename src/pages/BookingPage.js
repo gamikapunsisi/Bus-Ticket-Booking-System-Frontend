@@ -18,18 +18,75 @@ const BusBookingUI = () => {
 
     const routes = [
         "Makumbura - Badulla",
-        "Route 2",
-        "Route 3",
+        "Colombo - Kandy",
+        "Gampaha - Matara",
+        "Negombo - Galle",
+        "Kurunegala - Anuradhapura",
+        "Jaffna - Colombo",
     ];
 
-    // Filtered operators and routes based on search input
-    const filteredOperators = operators.filter((operator) =>
-        operator.toLowerCase().includes(operatorSearch.toLowerCase())
-    );
-
-    const filteredRoutes = routes.filter((route) =>
-        route.toLowerCase().includes(routeSearch.toLowerCase())
-    );
+    const busDetails = [
+        {
+            operator: "NCG Express",
+            route: "Makumbura - Badulla",
+            departs: "Makumbura 10:15 AM",
+            arrives: "Badulla 03:00 PM",
+            duration: "Approx 4h 30m",
+            price: "2,130 LKR",
+            seatsAvailable: "0 seats available",
+            closesIn: "Closes in 1:21:30",
+        },
+        {
+            operator: "Dinisuru Super Line",
+            route: "Colombo - Kandy",
+            departs: "Colombo 07:30 AM",
+            arrives: "Kandy 09:30 AM",
+            duration: "Approx 2h",
+            price: "1,050 LKR",
+            seatsAvailable: "10 seats available",
+            closesIn: "Closes in 3:15:00",
+        },
+        {
+            operator: "Pasindu Express",
+            route: "Gampaha - Matara",
+            departs: "Gampaha 06:00 AM",
+            arrives: "Matara 10:30 AM",
+            duration: "Approx 4h 30m",
+            price: "1,850 LKR",
+            seatsAvailable: "5 seats available",
+            closesIn: "Closes in 2:45:00",
+        },
+        {
+            operator: "Pubudu Power Line",
+            route: "Negombo - Galle",
+            departs: "Negombo 08:00 AM",
+            arrives: "Galle 12:30 PM",
+            duration: "Approx 4h 30m",
+            price: "1,920 LKR",
+            seatsAvailable: "2 seats available",
+            closesIn: "Closes in 4:00:00",
+        },
+        {
+            operator: "Saliya Super Line",
+            route: "Kurunegala - Anuradhapura",
+            departs: "Kurunegala 09:00 AM",
+            arrives: "Anuradhapura 12:30 PM",
+            duration: "Approx 3h 30m",
+            price: "1,780 LKR",
+            seatsAvailable: "15 seats available",
+            closesIn: "Closes in 2:20:00",
+        },
+        {
+            operator: "Sandasara Express",
+            route: "Jaffna - Colombo",
+            departs: "Jaffna 06:00 AM",
+            arrives: "Colombo 03:00 PM",
+            duration: "Approx 9h",
+            price: "3,450 LKR",
+            seatsAvailable: "8 seats available",
+            closesIn: "Closes in 5:45:00",
+        },
+    ];
 
     return (
         <div className="bg-gray-900 min-h-screen p-6 text-white">
@@ -40,8 +97,8 @@ const BusBookingUI = () => {
                         <button
                             key={index}
                             className={`px-4 py-2 rounded-lg ${date === "02"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-800 hover:bg-gray-700"
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-800 hover:bg-gray-700"
                                 }`}
                         >
                             {date}
@@ -67,7 +124,7 @@ const BusBookingUI = () => {
                         className="mt-2 w-full bg-gray-800 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Select Operator</option>
-                        {filteredOperators.map((operator, index) => (
+                        {operators.map((operator, index) => (
                             <option key={index} value={operator}>
                                 {operator}
                             </option>
@@ -90,7 +147,7 @@ const BusBookingUI = () => {
                         className="mt-2 w-full bg-gray-800 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Select Route</option>
-                        {filteredRoutes.map((route, index) => (
+                        {routes.map((route, index) => (
                             <option key={index} value={route}>
                                 {route}
                             </option>
@@ -100,31 +157,33 @@ const BusBookingUI = () => {
             </div>
 
             {/* Bus Booking Details */}
-            <div className="mt-8 bg-gray-800 p-6 rounded-lg">
-                <h2 className="text-xl font-bold">
-                    {selectedOperator || "NCG Express"} - Luxury 49 Seater
-                </h2>
-                <p className="mt-2 text-sm text-gray-400">Route: {selectedRoute || "Makumbura - Badulla"}</p>
-                <div className="flex flex-col sm:flex-row justify-between items-center mt-4">
-                    <div className="sm:w-1/2">
-                        <p>Departs: Makumbura 10:15 AM</p>
-                        <p>Arrives: Badulla 03:00 PM</p>
-                        <p>Duration: Approx 4h 30m</p>
+            <div className="mt-8">
+                {busDetails.map((bus, index) => (
+                    <div key={index} className="bg-gray-800 p-6 rounded-lg mb-4">
+                        <h2 className="text-xl font-bold">{bus.operator} - Luxury 49 Seater</h2>
+                        <p className="mt-2 text-sm text-gray-400">Route: {bus.route}</p>
+                        <div className="flex flex-col sm:flex-row justify-between items-center mt-4">
+                            <div className="sm:w-1/2">
+                                <p>Departs: {bus.departs}</p>
+                                <p>Arrives: {bus.arrives}</p>
+                                <p>Duration: {bus.duration}</p>
+                            </div>
+                            <div className="sm:w-1/2 text-right mt-4 sm:mt-0">
+                                <p className="text-lg font-bold">{bus.price}</p>
+                                <Link
+                                    to="/seat-selection"
+                                    className="mt-2 px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                                >
+                                    Book My Seats
+                                </Link>
+                            </div>
+                        </div>
+                        <div className="mt-4 text-red-500">
+                            <p>{bus.seatsAvailable}</p>
+                            <p>{bus.closesIn}</p>
+                        </div>
                     </div>
-                    <div className="sm:w-1/2 text-right mt-4 sm:mt-0">
-                        <p className="text-lg font-bold">2,130 LKR</p>
-                        <Link
-                            to="/seat-selection"
-                            className="mt-2 px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                        >
-                            Book My Seats
-                        </Link> {/* Link to SeatSelection page */}
-                    </div>
-                </div>
-                <div className="mt-4 text-red-500">
-                    <p>0 seats available</p>
-                    <p>Closes in 1:21:30</p>
-                </div>
+                ))}
             </div>
         </div>
     );
