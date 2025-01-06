@@ -28,29 +28,34 @@ const SeatSelection = () => {
   // Fetch booked seats when component mounts
   useEffect(() => {
     const fetchBookedSeats = async () => {
+      setLoading(true); // Start loading
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/bus/trips/${tripId}/seats`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/bus/trips/${tripId}/seats`,
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
           }
-        });
-        
+        );
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        console.log(data);
         const formattedBookedSeats = data.bookedSeats.map((seatId: string) => ({
-          seat_id: seatId
+          seat_id: seatId,
         }));
         setBookedSeats(formattedBookedSeats);
       } catch (err) {
         setError('Failed to fetch booked seats');
         console.error('Error fetching booked seats:', err);
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
@@ -58,16 +63,16 @@ const SeatSelection = () => {
   }, [tripId]);
 
   const isSeatBooked = (seatId: string) => {
-    return bookedSeats.some(booking => booking.seat_id === seatId);
+    return bookedSeats.some((booking) => booking.seat_id === seatId);
   };
 
   const isSeatSelected = (seatId: string) => selectedSeats.includes(seatId);
 
   const toggleSeat = (seatId: string) => {
     if (isSeatBooked(seatId)) return; // Don't allow selecting booked seats
-    
+
     if (isSeatSelected(seatId)) {
-      setSelectedSeats(selectedSeats.filter(id => id !== seatId));
+      setSelectedSeats(selectedSeats.filter((id) => id !== seatId));
     } else {
       setSelectedSeats([...selectedSeats, seatId]);
     }
@@ -79,22 +84,32 @@ const SeatSelection = () => {
       return;
     }
 
-    // Navigate to payment page with selected seats info
-    navigate('/payment', { 
-      state: { 
-        tripId,
-        tripDate,
-        selectedSeats,
-      }
-    });
+    setLoading(true); // Start loading
+    try {
+      // Simulate booking process or navigate to a payment API
+      await new Promise((res) => setTimeout(res, 1000)); // Example delay
+      navigate('/payment', {
+        state: {
+          tripId,
+          tripDate,
+          selectedSeats,
+        },
+      });
+    } catch (err) {
+      console.error('Booking error:', err);
+    } finally {
+      setLoading(false); // Stop loading
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Select Your Seats</h2>
-          
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Select Your Seats
+          </h2>
+
           {error && (
             <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-lg">
               {error}
@@ -106,9 +121,7 @@ const SeatSelection = () => {
             <p className="text-blue-800">
               Trip Date: {new Date(tripDate).toLocaleString()}
             </p>
-            <p className="text-blue-800">
-              Trip ID: {tripId}
-            </p>
+            <p className="text-blue-800">Trip ID: {tripId}</p>
           </div>
 
           {/* Screen */}
@@ -122,34 +135,39 @@ const SeatSelection = () => {
           <div className="w-full max-w-md mx-auto mb-8">
             {Array.from({ length: seatLayout.rows }).map((_, rowIndex) => (
               <div key={rowIndex} className="flex justify-center mb-2">
-                {Array.from({ length: seatLayout.seatsPerRow }).map((_, seatIndex) => {
-                  const seatNumber = rowIndex * seatLayout.seatsPerRow + seatIndex + 1;
-                  const seatId = `seat-${seatNumber}`;
-                  const isBooked = isSeatBooked(seatId);
-                  const isAisleSeat = seatIndex === seatLayout.aisle - 1;
-                  
-                  return (
-                    <>
-                      <button
-                        key={seatId}
-                        disabled={isBooked}
-                        className={`
+                {Array.from({ length: seatLayout.seatsPerRow }).map(
+                  (_, seatIndex) => {
+                    const seatNumber =
+                      rowIndex * seatLayout.seatsPerRow + seatIndex + 1;
+                    const seatId = `seat-${seatNumber}`;
+                    const isBooked = isSeatBooked(seatId);
+                    const isAisleSeat = seatIndex === seatLayout.aisle - 1;
+
+                    return (
+                      <>
+                        <button
+                          key={seatId}
+                          disabled={isBooked}
+                          className={`
                           w-12 h-12 m-1 rounded-t-lg transition-all
-                          ${isBooked 
-                            ? 'bg-red-200 text-red-700 cursor-not-allowed'
-                            : isSeatSelected(seatId)
+                          ${
+                            isBooked
+                              ? 'bg-red-200 text-red-700 cursor-not-allowed'
+                              : isSeatSelected(seatId)
                               ? 'bg-blue-500 text-white'
-                              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}
+                              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                          }
                           flex items-center justify-center
                         `}
-                        onClick={() => toggleSeat(seatId)}
-                      >
-                        {seatNumber}
-                      </button>
-                      {isAisleSeat && <div className="w-8" />}
-                    </>
-                  );
-                })}
+                          onClick={() => toggleSeat(seatId)}
+                        >
+                          {seatNumber}
+                        </button>
+                        {isAisleSeat && <div className="w-8" />}
+                      </>
+                    );
+                  }
+                )}
               </div>
             ))}
           </div>
@@ -187,11 +205,13 @@ const SeatSelection = () => {
                 disabled={loading || selectedSeats.length === 0}
                 className={`
                   px-6 py-2 rounded
-                  ${loading 
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : selectedSeats.length > 0
+                  ${
+                    loading
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : selectedSeats.length > 0
                       ? 'bg-blue-500 text-white hover:bg-blue-600'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'}
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }
                 `}
               >
                 {loading ? 'Booking...' : 'Confirm Booking'}
@@ -204,4 +224,4 @@ const SeatSelection = () => {
   );
 };
 
-export default SeatSelection; 
+export default SeatSelection;
