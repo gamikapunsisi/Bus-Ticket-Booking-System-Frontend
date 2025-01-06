@@ -179,7 +179,7 @@ const AdminDashboard = () => {
                 trips.map((trip) => (
                   <div key={trip.trip_id} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">{trip.busRoute}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">{trip.bus_route}</h3>
                       <div className="flex gap-2">
                         <button onClick={() => navigate(`/trips/${trip.trip_id}`)} className="text-blue-600 hover:text-blue-800">
                           <FaEye />
@@ -193,9 +193,9 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     <div className="space-y-2 text-sm text-gray-600">
-                      <p>Driver: {trip.driverName}</p>
-                      <p>Conductor: {trip.conductorName}</p>
-                      <p>Date: {new Date(trip.tripDate).toLocaleString()}</p>
+                      <p>Driver: {trip.driver_name}</p>
+                      <p>Conductor: {trip.conductor_name}</p>
+                      <p>Date: {new Date(trip.trip_date).toLocaleString()}</p>
                     </div>
                   </div>
                 ))
