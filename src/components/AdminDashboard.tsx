@@ -208,7 +208,7 @@ const AdminDashboard = () => {
                         <button onClick={() => navigate(`/routes/edit/${route.route_id}`)} className="text-green-600 hover:text-green-800">
                           <FaEdit />
                         </button>
-                        <button onClick={() => handleDeleteRoute(route.route_id)} className="text-red-600 hover:text-red-800">
+                        <button onClick={() => handleDelete(route.route_id)} className="text-red-600 hover:text-red-800">
                           <FaTrash />
                         </button>
                       </div>
