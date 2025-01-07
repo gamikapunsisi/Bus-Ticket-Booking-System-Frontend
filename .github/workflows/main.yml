@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # Specify your Node.js version (use the one you're using locally)
+          node-version: '22'  # Specify your Node.js version (use the one you're using locally)
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -39,5 +39,5 @@ jobs:
       # Step 6: Sync build folder with S3 bucket
       - name: Deploy to S3
         run: |
-          aws s3 sync ./build/ s3://bookingfrontend.gamikapunsisi.live --delete
+          aws s3 sync ./build/ s3://ebusreserve.site/ --delete
           # The `--delete` option removes files from the S3 bucket that are not in the `build/` folder
