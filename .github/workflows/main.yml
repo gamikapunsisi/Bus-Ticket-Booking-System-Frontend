@@ -36,8 +36,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1  # Replace with your AWS region
 
-      # Step 6: Sync build folder with S3 bucket
+          # Step 6: Sync build folder with S3 bucket
       - name: Deploy to S3
         run: |
-          aws s3 sync ./build/ s3://http://ebusreserve.site --delete
-          # The `--delete` option removes files from the S3 bucket that are not in the `build/` folder
+          aws s3 sync ./build/ s3://ebusreserve.site --delete
