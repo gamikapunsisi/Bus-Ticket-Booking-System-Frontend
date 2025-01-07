@@ -3,7 +3,7 @@ name: Deploy React App to S3
 on:
   push:
     branches:
-      - main  # Trigger the deployment on every push to the `main` branch
+      - main  # Trigger deployment on every push to the `main` branch
 
 jobs:
   build-and-deploy:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '22'  # Specify your Node.js version (use the one you're using locally)
+          node-version: '22'  # You can update this to match your Node.js version
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -39,5 +39,5 @@ jobs:
       # Step 6: Sync build folder with S3 bucket
       - name: Deploy to S3
         run: |
-          aws s3 sync ./build/ s3://ebusreserve.site/ --delete
-          # The `--delete` option removes files from the S3 bucket that are not in the `build/` folder
+          aws s3 sync ./dist/ s3://ebusreserve.site/ --delete
+          # The `--delete` option removes files from the S3 bucket that are not in the `dist/` folder
