@@ -3,22 +3,22 @@ name: Deploy React App to S3
 on:
   push:
     branches:
-      - main  # Trigger the deployment on every push to the `main` branch
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository code
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js (for React build process)
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '22'  # Specify your Node.js version (use the one you're using locally)
+          node-version: '18'  # Use an appropriate stable Node.js version
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -28,15 +28,19 @@ jobs:
       - name: Build the React app
         run: npm run build
 
-      # Step 5: Set up AWS CLI
-      - name: Set up AWS CLI
+      # Step 5: Debugging - Check if dist folder exists
+      - name: Debug dist folder
+        run: ls -la ./dist/
+
+      # Step 6: Configure AWS CLI
+      - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1  # Replace with your AWS region
+          aws-region: eu-north-1
 
-          # Step 6: Sync build folder with S3 bucket
+      # Step 7: Deploy to S3
       - name: Deploy to S3
         run: |
-          aws s3 sync ./build/ s3://ebusreserve.site --delete
+          aws s3 sync ./dist/ s3://ebusreserve.site --delete
