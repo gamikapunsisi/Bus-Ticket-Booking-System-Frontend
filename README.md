@@ -1,3 +1,10 @@
+## Coventry Index			:	14946246
+## NIBM Index			: 	Yr3CobscComp232p-031
+## NIBM Registered Name	: 	R.M.G.P.Ramanayaka
+
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
