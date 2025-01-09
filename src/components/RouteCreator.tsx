@@ -32,36 +32,56 @@ const RouteCreator = () => {
     // Validate inputs
     if (!routeName.trim()) {
       setError('Route name is required');
+      console.log("Error: Route name is missing");
       return;
     }
 
     const validStops = stops.filter(stop => stop.trim());
     if (validStops.length < 2) {
       setError('At least two stops are required');
+      console.log("Error: Not enough stops");
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/bus/routes`,
+      if (!token) {
+        setError('No token found. Please log in again.');
+        console.log("Error: No token found");
+        return;
+      }
+
+      // Log the full API URL for debugging
+      const apiUrl = `${import.meta.env.VITE_API_URL}/api/bus/routes`;
+      console.log("API URL:", apiUrl);
+
+      const response = await axios.post(
+        apiUrl,
         {
           routeName: routeName.trim(),
-          stops: validStops
+          stops: stops.filter(stop => stop.trim())
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           }
         }
       );
 
+      // Log the successful response
+      console.log('Route creation response:', response.data);
+
+      // Handle success
       setSuccess('Route created successfully');
       setTimeout(() => {
         navigate('/admin/dashboard');
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create route');
+      console.error("Full error object:", err);
+      console.error("API Error Response:", err.response);
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to create route';
+      setError(`Error: ${errorMessage}`);
     }
   };
 

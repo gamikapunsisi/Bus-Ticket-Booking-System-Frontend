@@ -40,26 +40,53 @@ const AdminDashboard = () => {
   const fetchTrips = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/bus/trips`, {
+      const baseUrl = import.meta.env.VITE_API_URL;
+      
+      if (!token) {
+        setError('🔒 No authentication token found');
+        return;
+      }
+
+      const response = await fetch(`${baseUrl}/api/bus/trips`, {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
 
-      if (response.status === 403) {
-        setError('Access denied. Admin privileges required.');
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch trips');
-      }
-
       const data = await response.json();
-      setTrips(data.trips);
+      console.log('Raw API Response:', data); // Debug log
+
+      if (response.status === 200) {
+        // Handle both array and object responses
+        const tripsData = data.trips || data;
+        
+        const formattedTrips = tripsData.map((trip: any) => {
+          console.log('Processing trip:', trip); // Debug log for each trip
+          return {
+            trip_id: trip._id || trip.trip_id,
+            bus_route: trip.bus_route || 'No Route',
+            driver_name: trip.driver_name || 'No Driver',
+            conductor_name: trip.conductor_name || 'No Conductor',
+            // Ensure proper date formatting
+            trip_date: trip.trip_date ? new Date(trip.trip_date).toISOString() : new Date().toISOString()
+          };
+        });
+
+        console.log('Formatted trips:', formattedTrips); // Debug log
+        setTrips(formattedTrips);
+        setError('✅ Successfully fetched trips (Status: 200)');
+      } else if (response.status === 404) {
+        setTrips([]);
+        setError('ℹ️ No trips found. Please create a new trip.');
+      } else {
+        throw new Error(`Failed to fetch trips: ${response.status}`);
+      }
     } catch (err) {
-      setError('Failed to fetch trips');
+      console.error('Error in fetchTrips:', err);
+      setError(`❌ ${err instanceof Error ? err.message : 'Failed to fetch trips'}`);
+      setTrips([]);
     } finally {
       setLoading(false);
     }
@@ -98,7 +125,9 @@ const AdminDashboard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/api/bus/trips/${tripId}`, {
+      const baseUrl = import.meta.env.VITE_API_URL;
+      
+      const response = await fetch(`${baseUrl}/api/bus/trips/${tripId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -106,18 +135,20 @@ const AdminDashboard = () => {
         }
       });
 
-      if (response.status === 403) {
-        setError('Access denied. Admin privileges required.');
-        return;
+      if (response.status === 200) {
+        setError('✅ Trip deleted successfully (Status: 200)');
+        setTrips(trips.filter(trip => trip.trip_id !== tripId));
+      } else if (response.status === 401) {
+        setError('🔒 Unauthorized access (Status: 401)');
+      } else if (response.status === 403) {
+        setError('🚫 Access forbidden (Status: 403)');
+      } else if (response.status === 404) {
+        setError('❌ Trip not found (Status: 404)');
+      } else {
+        setError(`❌ Failed to delete trip (Status: ${response.status})`);
       }
-
-      if (!response.ok) {
-        throw new Error('Failed to delete trip');
-      }
-
-      setTrips(trips.filter(trip => trip.trip_id !== tripId));
     } catch (err) {
-      setError('Failed to delete trip');
+      setError('❌ Network error while deleting trip');
     }
   };
 
@@ -193,9 +224,16 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     <div className="space-y-2 text-sm text-gray-600">
-                      <p>Driver: {trip.driver_name}</p>
-                      <p>Conductor: {trip.conductor_name}</p>
-                      <p>Date: {new Date(trip.trip_date).toLocaleString()}</p>
+                      <p><strong>Driver:</strong> {trip.driver_name || 'Not assigned'}</p>
+                      <p><strong>Conductor:</strong> {trip.conductor_name || 'Not assigned'}</p>
+                      <p><strong>Date:</strong> {new Date(trip.trip_date).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      })}</p>
                     </div>
                   </div>
                 ))

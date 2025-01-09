@@ -28,19 +28,22 @@ const TripCreator = () => {
       
       const response = await fetch(`${baseUrl}/api/bus/routes`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch routes');
-      }
-
       const data = await response.json();
-      setRoutes(data.routes);
+      
+      if (response.ok) {
+        const routesData = data.routes || data;
+        setRoutes(routesData);
+        setError('');
+      } else {
+        setError('Failed to fetch routes');
+      }
     } catch (err) {
-      setError('Failed to fetch routes');
-      console.error('Error:', err);
+      setError('Error loading routes');
     }
   };
 
@@ -50,36 +53,92 @@ const TripCreator = () => {
     setLoading(true);
 
     try {
+      if (!selectedRoute || !driverName || !conductorName || !tripDate || !tripTime) {
+        setError('Please fill in all required fields');
+        setLoading(false);
+        return;
+      }
+
       const baseUrl = import.meta.env.VITE_API_URL;
       const token = localStorage.getItem('token');
 
-      // Combine date and time
-      const tripDateTime = new Date(`${tripDate}T${tripTime}`);
+      if (!token) {
+        setError('Authentication required');
+        setLoading(false);
+        return;
+      }
 
-      const response = await fetch(`${baseUrl}/api/bus/trip/create`, {
+      const tripDateTime = new Date(`${tripDate}T${tripTime}`);
+      
+      const tripData = {
+        tripId: `TRIP-${Date.now()}`,
+        busRoute: selectedRoute,
+        driverName: driverName,
+        conductorName: conductorName,
+        tripDate: tripDateTime
+      };
+
+      console.log('Attempting to create trip with data:', tripData);
+      console.log('API URL:', `${baseUrl}/api/bus/trips`);
+      console.log('Token exists:', !!token);
+
+      const response = await fetch(`${baseUrl}/api/bus/trips`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          bus_route: selectedRoute,
-          driver_name: driverName,
-          conductor_name: conductorName,
-          trip_date: tripDateTime.toISOString()
-        })
+        body: JSON.stringify(tripData)
       });
 
-      const data = await response.json();
+      console.log('Response status:', response.status);
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.log('Response is not JSON:', responseText);
+      }
 
       if (response.ok) {
+        console.log('Trip created successfully:', data);
+        setError('✅ Trip created successfully');
         alert('Trip created successfully!');
         navigate('/admin/dashboard');
       } else {
-        throw new Error(data.message || 'Failed to create trip');
+        switch (response.status) {
+          case 400:
+            setError(`❌ Bad Request: ${data?.message || 'Invalid trip data'}`);
+            break;
+          case 401:
+            setError('❌ Unauthorized: Please log in again');
+            navigate('/login');
+            break;
+          case 403:
+            setError('❌ Forbidden: You do not have permission to create trips');
+            break;
+          case 409:
+            setError('❌ Conflict: Trip already exists');
+            break;
+          case 422:
+            setError(`❌ Validation Error: ${data?.message || 'Invalid data format'}`);
+            break;
+          case 500:
+            setError('❌ Server Error: Please try again later');
+            break;
+          default:
+            setError(`❌ Error: ${data?.message || 'Failed to create trip'}`);
+        }
+        console.error('Failed to create trip:', {
+          status: response.status,
+          data: data
+        });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create trip');
+      console.error('Error in trip creation:', err);
+      setError(`❌ Network Error: ${err instanceof Error ? err.message : 'Failed to create trip'}`);
     } finally {
       setLoading(false);
     }
@@ -95,17 +154,12 @@ const TripCreator = () => {
 
         {error && (
           <div className="px-8 py-4">
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              </div>
+            <div className={`p-4 rounded-md ${
+              error.startsWith('✅') ? 'bg-green-50 border-l-4 border-green-500' : 'bg-red-50 border-l-4 border-red-500'
+            }`}>
+              <p className={`text-sm ${
+                error.startsWith('✅') ? 'text-green-700' : 'text-red-700'
+              }`}>{error}</p>
             </div>
           </div>
         )}
@@ -113,7 +167,7 @@ const TripCreator = () => {
         <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Route</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Route *</label>
               <select
                 value={selectedRoute}
                 onChange={(e) => setSelectedRoute(e.target.value)}
@@ -130,7 +184,7 @@ const TripCreator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Driver Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Driver Name *</label>
               <input
                 type="text"
                 value={driverName}
@@ -141,7 +195,7 @@ const TripCreator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Conductor Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Conductor Name *</label>
               <input
                 type="text"
                 value={conductorName}
@@ -152,19 +206,18 @@ const TripCreator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Trip Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Trip Date *</label>
               <input
                 type="date"
                 value={tripDate}
                 onChange={(e) => setTripDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Trip Time</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Trip Time *</label>
               <input
                 type="time"
                 value={tripTime}
@@ -175,20 +228,20 @@ const TripCreator = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
+          <div className="flex justify-end gap-4 pt-6">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`px-6 py-3 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                loading
-                  ? 'bg-gray-400 cursor-not-allowed'
+              className={`px-6 py-3 text-sm font-medium text-white rounded-lg ${
+                loading 
+                  ? 'bg-gray-400 cursor-not-allowed' 
                   : 'bg-blue-600 hover:bg-blue-700'
               }`}
             >
