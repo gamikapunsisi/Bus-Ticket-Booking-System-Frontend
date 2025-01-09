@@ -1,38 +1,50 @@
-name: Deploy React App to FTP Server
+name: E-BusReserv Build
 
 on:
   push:
     branches:
-      - main  # Trigger deployment on every push to the `main` branch
+      - main
 
 jobs:
-  build-and-deploy:
+  FTP-Deploy-Action:
+    name: Deploy to cPanel
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository code
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      # Step 2: Set up Node.js (for React build process)
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Get latest code
+        uses: actions/checkout@v3
         with:
-          node-version: '22'  # Update this to match your Node.js version
+          fetch-depth: 2
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
+      - name: Use Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          CI: false
 
-      # Step 4: Build the React app
-      - name: Build the React app
-        run: npm run build
+      - name: Build Project
+        run: npm run build  # Use npm run build for production
 
-      # Step 5: Deploy to FTP Server
-      - name: Deploy to FTP Server
-        uses: SamKirkland/FTP-Deploy-Action@4.3.5
+      - name: Sync folders and files to the server
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
-          server: ${{ secrets.FTP_SERVER }}  # FTP server URL
-          username: ${{ secrets.FTP_USERNAME }}  # FTP username
-          password: ${{ secrets.FTP_PASSWORD }}  # FTP password
-          local-dir: ./build  # React build folder
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+
+      - name: Check website status
+        run: curl -I ${{ secrets.url }}
