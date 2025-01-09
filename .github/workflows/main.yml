@@ -1,4 +1,4 @@
-name: Deploy React App to S3
+name: Deploy React App to FTP Server
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '22'  # You can update this to match your Node.js version
+          node-version: '22'  # Update this to match your Node.js version
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -28,16 +28,11 @@ jobs:
       - name: Build the React app
         run: npm run build
 
-      # Step 5: Set up AWS CLI
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+      # Step 5: Deploy to FTP Server
+      - name: Deploy to FTP Server
+        uses: SamKirkland/FTP-Deploy-Action@4.3.5
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1  # Replace with your AWS region
-
-      # Step 6: Sync build folder with S3 bucket
-      - name: Deploy to S3
-        run: |
-          aws s3 sync ./dist/ s3://ebusreserve.site/ --delete
-          # The `--delete` option removes files from the S3 bucket that are not in the `dist/` folder
+          server: ${{ secrets.FTP_SERVER }}  # FTP server URL
+          username: ${{ secrets.FTP_USERNAME }}  # FTP username
+          password: ${{ secrets.FTP_PASSWORD }}  # FTP password
+          local-dir: ./build  # React build folder
